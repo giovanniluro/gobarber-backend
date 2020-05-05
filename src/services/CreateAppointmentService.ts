@@ -3,9 +3,14 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import { startOfHour } from 'date-fns';
 import { getCustomRepository } from 'typeorm'
 
+interface AppointmentDTO {
+  provider_id: string;
+  date: Date;
+}
+
 class CreateAppointmentService {
 
-  public async execute({ date, provider }: Omit<Appointment, 'id'>): Promise<Appointment> {
+  public async execute({ date, provider_id}: AppointmentDTO): Promise<Appointment> {
 
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
@@ -17,7 +22,7 @@ class CreateAppointmentService {
       throw new Error("Appointment already dated!");
     }
 
-    const appointment = appointmentsRepository.create({ provider, date: startDate });
+    const appointment = appointmentsRepository.create({ provider_id, date: startDate });
 
     await appointmentsRepository.save(appointment);
 

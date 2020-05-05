@@ -1,30 +1,32 @@
 import { Router } from 'express';
-import { startOfHour, parseISO, isEqual } from 'date-fns';
+import { parseISO } from 'date-fns';
+import { getCustomRepository } from 'typeorm';
 import Appointment from '../models/Appointment';
+import CreateAppointmentService from '../services/CreateAppointmentService';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
 const appointmentRoutes = Router();
 
-const appointmentsRepository =  new AppointmentsRepository();
+appointmentRoutes.post('/', async (request, response) => {
+  const createAppointment = new CreateAppointmentService();
+  const { provider, date } = request.body;
 
-appointmentRoutes.post('/', (request, response) => {
-  const {provider, date} = request.body;
+  try {
+    const parsedDate = parseISO(date);
 
-  const parsedDate = startOfHour(parseISO(date));
+    const appointment = await createAppointment.execute({provider, date: parsedDate});
 
-  const foundAppointment = appointmentsRepository.findOnTheSameDate(parsedDate);
-
-  if(foundAppointment) {
-    return response.status(400).json({message: "This appointment is already booked!"});
+    return response.json(appointment);
   }
-
-  const appointment = appointmentsRepository.create({provider, date: parsedDate});
-
-  return response.json(appointment);
+  catch(err){
+    return response.json({message: err.message});
+  }
 });
 
-appointmentRoutes.get('/', (request, response) => {
-  const appointments = appointmentsRepository.all();
+appointmentRoutes.get('/', async (request, response) => {
+  const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+  const appointments = await appointmentsRepository.find();
 
   return response.json(appointments);
 });

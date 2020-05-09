@@ -1,9 +1,9 @@
-import User from '../models/User';
-import { getRepository } from 'typeorm';
+import User from '@modules/users/infra/typeorm/entities/User';
 import path from 'path';
-import uploadConfig from '../config/upload';
+import uploadConfig from '@config/upload';
 import fs from 'fs';
-import AppError from '../errors/AppError';
+import AppError from '@shared/errors/AppError';
+import IUsersRepository from '../repositories/IUsersRepository';
 
 interface RequestDTO {
   user_id: string;
@@ -11,15 +11,14 @@ interface RequestDTO {
 }
 
 class updateUserAvatarService {
+
+  constructor(private usersRepository: IUsersRepository){}
+
   public async execute({ user_id, avatar_url }: RequestDTO): Promise<User> {
-    const usersRepository = getRepository(User);
-
-    const user = await usersRepository.findOne(user_id);
-
+    const user = await this.usersRepository.findById(user_id);
     if (!user) {
       throw new AppError("Woops! An error ocurred when trying to change your avatar, try to login again!", 400);
     }
-
     if (user.avatar_url) {
       const useraAvatarFilePath = path.join(uploadConfig.path, user.avatar_url);
       const fileExists = await fs.promises.stat(useraAvatarFilePath);
@@ -31,7 +30,7 @@ class updateUserAvatarService {
 
     user.avatar_url = avatar_url;
 
-    await usersRepository.save(user);
+    await this.usersRepository.save(user);
 
     delete user.password;
 

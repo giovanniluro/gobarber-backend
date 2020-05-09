@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
-import { secret } from '../config/jwt';
+import { secret } from '@config/jwt';
 
 interface TokenPayload {
   iat: number;

@@ -1,9 +1,9 @@
-import User from '../models/User';
-import { getRepository } from 'typeorm';
+import User from '@modules/users/infra/typeorm/entities/User';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { secret } from '../config/jwt';
-import AppError from '../errors/AppError';
+import { secret } from '@config/jwt';
+import AppError from '@shared/errors/AppError';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface authDTO {
   email: string;
@@ -16,10 +16,12 @@ interface response{
 }
 
 class AuthenticateUserService {
-  public async execute({email, password}: authDTO): Promise<response> {
-    const usersRepository = getRepository(User);
 
-    const foundUser = await usersRepository.findOne({where: {email}});
+  constructor(private usersRepository: IUsersRepository){}
+
+  public async execute({email, password}: authDTO): Promise<response> {
+
+    const foundUser = await this.usersRepository.findByEmail(email);
 
     if(!foundUser) throw new AppError("Email not found!", 401);
 

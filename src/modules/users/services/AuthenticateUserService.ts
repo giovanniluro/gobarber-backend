@@ -36,6 +36,8 @@ class AuthenticateUserService {
 
     });
 
+    delete foundUser.password;
+
     return {user: foundUser, token};
   }
 }

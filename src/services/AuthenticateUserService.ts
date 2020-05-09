@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { secret } from '../config/jwt';
+import AppError from '../errors/AppError';
 
 interface authDTO {
   email: string;
@@ -20,11 +21,11 @@ class AuthenticateUserService {
 
     const foundUser = await usersRepository.findOne({where: {email}});
 
-    if(!foundUser) throw new Error("Email not found!");
+    if(!foundUser) throw new AppError("Email not found!", 401);
 
     const passwordMatched = await compare(password, foundUser.password);
 
-    if(!passwordMatched) throw new Error("Password do not match.");
+    if(!passwordMatched) throw new AppError("Password do not match.", 401);
 
 
     const token = sign({foundUser}, secret, {

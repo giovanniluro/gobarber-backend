@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken';
 import { secret } from '@config/jwt';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IHashProvider from '@modules/users/provider/HashProvider/models/IHashProvider';
 
 interface authDTO {
   email: string;
@@ -17,7 +18,7 @@ interface response{
 
 class AuthenticateUserService {
 
-  constructor(private usersRepository: IUsersRepository){}
+  constructor(private usersRepository: IUsersRepository, private hashProvider: IHashProvider){}
 
   public async execute({email, password}: authDTO): Promise<response> {
 
@@ -25,7 +26,7 @@ class AuthenticateUserService {
 
     if(!foundUser) throw new AppError("Email not found!", 401);
 
-    const passwordMatched = await compare(password, foundUser.password);
+    const passwordMatched = await this.hashProvider.compareHash(password, foundUser.password);
 
     if(!passwordMatched) throw new AppError("Password do not match.", 401);
 

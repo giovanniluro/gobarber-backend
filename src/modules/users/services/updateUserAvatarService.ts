@@ -4,6 +4,7 @@ import uploadConfig from '@config/upload';
 import fs from 'fs';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
+import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
 interface RequestDTO {
   user_id: string;
@@ -12,7 +13,7 @@ interface RequestDTO {
 
 class updateUserAvatarService {
 
-  constructor(private usersRepository: IUsersRepository){}
+  constructor(private usersRepository: IUsersRepository, private storageProvider: IStorageProvider){}
 
   public async execute({ user_id, avatar_url }: RequestDTO): Promise<User> {
     const user = await this.usersRepository.findById(user_id);
@@ -20,15 +21,12 @@ class updateUserAvatarService {
       throw new AppError("Woops! An error ocurred when trying to change your avatar, try to login again!", 400);
     }
     if (user.avatar_url) {
-      const useraAvatarFilePath = path.join(uploadConfig.path, user.avatar_url);
-      const fileExists = await fs.promises.stat(useraAvatarFilePath);
-
-      if (fileExists) {
-        await fs.promises.unlink(useraAvatarFilePath);
-      }
+      await this.storageProvider.delete(user.avatar_url);
     }
 
-    user.avatar_url = avatar_url;
+    const filename = await this.storageProvider.save(avatar_url);
+
+    user.avatar_url = filename;
 
     await this.usersRepository.save(user);
 

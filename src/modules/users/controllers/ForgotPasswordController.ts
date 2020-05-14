@@ -11,7 +11,7 @@ export default class ForgotPasswordController {
 
     const usersRepository = new UsersRepository();
     const userTokensRepository = new UserTokensRepository();
-    const mailProvider = await new MailProvider(new TemplateProvider());
+    const mailProvider = new MailProvider(new TemplateProvider());
 
     const { email } = request.body;
 

@@ -3,12 +3,20 @@ import UsersRepository from '@modules/users/repositories/fakes/FakeUsersReposito
 import FakeHashProvider from '@modules/users/provider/HashProvider/fakes/FakeHashProvider';
 import AppError from '@shared/errors/AppError';
 
+let usersRepository: UsersRepository;
+let hashProvider: FakeHashProvider;
+let createUserService: CreateUserService;
+
+
 describe('CreateUser', () => {
 
+  beforeEach(() => {
+    usersRepository = new UsersRepository();
+    hashProvider = new FakeHashProvider();
+    createUserService = new CreateUserService(usersRepository, hashProvider);
+  })
+
   it('should be able to create a new user', async () => {
-    const usersRepository = new UsersRepository();
-    const hashProvider = new FakeHashProvider();
-    const createUserService = new CreateUserService(usersRepository, hashProvider);
 
     const user = await createUserService.execute({ name: 'John Doe', email: 'johndoe@wow.com', password: '123' });
 

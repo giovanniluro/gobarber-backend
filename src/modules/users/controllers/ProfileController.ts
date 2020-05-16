@@ -13,6 +13,8 @@ export default class ProfileController {
 
     const user = await showProfileService.execute(userId);
 
+    delete user.password;
+
     return response.json({user});
   }
 

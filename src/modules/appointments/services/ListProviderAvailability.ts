@@ -40,9 +40,6 @@ export default class ListProviderAvailability {
 
     })
 
-    console.log(eachDayArray);
     return availability;
-
   }
-
 }

@@ -14,22 +14,26 @@ describe('ProviderAvailability', () => {
 
     await fakeAppointmentsRepository.create({
       date: new Date(2020, 4, 10, 8, 0, 0),
-      provider_id: 'user'
+      provider_id: 'user',
+      user_id: 'user'
     });
 
     await fakeAppointmentsRepository.create({
       date: new Date(2020, 4, 10, 9, 0, 0),
-      provider_id: 'user'
+      provider_id: 'user',
+      user_id: 'user'
     });
 
     await fakeAppointmentsRepository.create({
       date: new Date(2020, 4, 15, 10, 0, 0),
-      provider_id: 'user'
+      provider_id: 'user',
+      user_id: 'user'
     });
 
     await fakeAppointmentsRepository.create({
       date: new Date(2020, 4, 15, 8, 0, 0),
-      provider_id: 'user'
+      provider_id: 'user',
+      user_id: 'user'
     });
 
     const availability = await listProviderAvailability.execute({
@@ -46,5 +50,4 @@ describe('ProviderAvailability', () => {
     ]))
 
   });
-
 });

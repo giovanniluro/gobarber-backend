@@ -1,7 +1,8 @@
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
-import { startOfHour, isBefore, addHours, getHours } from 'date-fns';
+import { startOfHour, isBefore, addHours, getHours, format } from 'date-fns';
 import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 
 interface AppointmentDTO {
   provider_id: string;
@@ -11,7 +12,7 @@ interface AppointmentDTO {
 
 class CreateAppointmentService {
 
-  constructor(private appointmentsRepository: IAppointmentsRepository){}
+  constructor(private appointmentsRepository: IAppointmentsRepository, private notificationsRepository: INotificationsRepository){}
 
   public async execute({ date, provider_id, user_id}: AppointmentDTO): Promise<Appointment> {
 
@@ -36,6 +37,13 @@ class CreateAppointmentService {
     }
 
     const appointment = await this.appointmentsRepository.create({ provider_id, date: startDate, user_id });
+
+    const formatedDate = format(date, "dd/MM/yyyy 'às' HH:mm");
+
+    await this.notificationsRepository.create({
+      recipient_id: provider_id,
+      content: `Novo agendamento para ${formatedDate}`
+    });
 
     return appointment;
   }

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import {classToClass} from 'class-transformer'
 import UpdateProfileService from '@modules/users/services/UpdateProfileService';
 import UsersRepository from '@modules/users/infra/typeorm/repositores/UsersRepository';
 import HashProvider from '@modules/users/provider/HashProvider/implementations/BCryptHashProvider';
@@ -13,9 +14,7 @@ export default class ProfileController {
 
     const user = await showProfileService.execute(userId);
 
-    delete user.password;
-
-    return response.json({user});
+    return response.json({user: classToClass(user)});
   }
 
   public async update(request: Request,response: Response): Promise<Response> {
@@ -30,11 +29,9 @@ export default class ProfileController {
       email,
       name,
       password
-    })
+    });
 
-    delete user.password;
-
-    return response.json({user});
+    return response.json({user: classToClass(user)});
   }
 
 }

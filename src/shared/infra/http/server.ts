@@ -3,6 +3,7 @@ import express from 'express';
 import 'express-async-errors';
 import routes from './routes';
 import '@shared/infra/typeorm';
+import rateLimiter from './middlewares/rateLimiter';
 import 'reflect-metadata';
 import { errors } from 'celebrate';
 import uploadConfig from '@config/upload';
@@ -13,6 +14,7 @@ import cors from 'cors';
 const app = express();
 
 app.use(cors());
+app.use(rateLimiter);
 app.use(express.json());
 app.use('/files', express.static(uploadConfig.path));
 app.use(routes);

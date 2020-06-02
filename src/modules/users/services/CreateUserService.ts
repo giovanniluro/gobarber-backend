@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs'
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IHashProvider from '@modules/users/provider/HashProvider/models/IHashProvider';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 interface userDTO {
   name: string;
@@ -12,7 +13,7 @@ interface userDTO {
 
 class CreateUserService {
 
-  constructor(private usersRepository: IUsersRepository, private hashProvider: IHashProvider) { }
+  constructor(private usersRepository: IUsersRepository, private hashProvider: IHashProvider, private cacheProvider: ICacheProvider) { }
 
 
   public async execute({ name, email, password }: userDTO): Promise<User> {
@@ -24,6 +25,8 @@ class CreateUserService {
     const hashedPassword = await this.hashProvider.generateHash(password);
 
     const newUser = await this.usersRepository.create({ name, email, password: hashedPassword });
+
+    await this.cacheProvider.invalidatePrefix('providers-list');
 
     return newUser;
   }

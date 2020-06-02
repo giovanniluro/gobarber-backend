@@ -3,6 +3,7 @@ import { startOfHour, isBefore, addHours, getHours, format } from 'date-fns';
 import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 interface AppointmentDTO {
   provider_id: string;
@@ -12,7 +13,7 @@ interface AppointmentDTO {
 
 class CreateAppointmentService {
 
-  constructor(private appointmentsRepository: IAppointmentsRepository, private notificationsRepository: INotificationsRepository){}
+  constructor(private appointmentsRepository: IAppointmentsRepository, private notificationsRepository: INotificationsRepository, private cacheProvider: ICacheProvider){}
 
   public async execute({ date, provider_id, user_id}: AppointmentDTO): Promise<Appointment> {
 
@@ -44,6 +45,8 @@ class CreateAppointmentService {
       recipient_id: provider_id,
       content: `Novo agendamento para ${formatedDate}`
     });
+
+    this.cacheProvider.invalidate(`provider-appointments:${user_id}:${format(date, 'yyyy-M-d')}`);
 
     return appointment;
   }

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { classToClass } from 'class-transformer';
 import UsersRepository from '@modules/users/infra/typeorm/repositores/UsersRepository';
 import BCryptHashProvider from '@modules/users/provider/HashProvider/implementations/BCryptHashProvider';
 import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
@@ -11,9 +12,9 @@ export default class UsersControllers {
     const hashProvider = new BCryptHashProvider();
     const authUser = new AuthenticateUserService(usersRepository, hashProvider);
 
-    const auth = await authUser.execute({ email, password });
+    const {user, token} = await authUser.execute({ email, password });
 
-    return response.json(auth);
+    return response.json({user: classToClass(user), token});
   }
 
 }

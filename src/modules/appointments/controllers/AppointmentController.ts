@@ -3,18 +3,18 @@ import CreateAppointmentService from '@modules/appointments/services/CreateAppoi
 import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
 import NotificationsRepository from '@modules/notifications/infra/typeorm/repositories/NotificationRepository';
 import { parseISO } from 'date-fns';
+import RedisCacheProvider from '@shared/container/providers/CacheProvider/implementations/RedisCacheProvider';
 
 export default class AppointmentController {
   public async create(request: Request, response: Response ): Promise<Response> {
     const appointmentsRepository = new AppointmentsRepository();
     const notificationsRepository = new NotificationsRepository();
-    const createAppointment = new CreateAppointmentService(appointmentsRepository, notificationsRepository);
+    const cacheProvider = new RedisCacheProvider();
+    const createAppointment = new CreateAppointmentService(appointmentsRepository, notificationsRepository, cacheProvider);
     const user_id = request.user.id;
     const { provider_id, date } = request.body;
 
-    const parsedDate = parseISO(date);
-
-    const appointment = await createAppointment.execute({ provider_id, date: parsedDate, user_id });
+    const appointment = await createAppointment.execute({ provider_id, date, user_id });
 
     return response.json(appointment);
   }

@@ -1,5 +1,4 @@
 import User from '@modules/users/infra/typeorm/entities/User';
-import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { secret } from '@config/jwt';
 import AppError from '@shared/errors/AppError';

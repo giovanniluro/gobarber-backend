@@ -1,1 +1,1 @@
-export const secret = process.env.APP_SECRET;
+export const secret = 'asjdklasdjalsd21331209daskl';

@@ -7,14 +7,14 @@ export default class DailyAvailabilityProviderController {
   public async index(request: Request, response: Response){
     const appointmentsRepository = new AppointmentsRepository();
     const listProviderDailyAvailability = new ListProviderDailyAvailability(appointmentsRepository);
-    const { day, month, year } = request.body;
+    const { day, month, year } = request.query;
     const provider_id = request.params.id;
 
     const availability = await listProviderDailyAvailability.execute({
-      month,
+      month: Number(month),
       userID: provider_id,
-      year,
-      day
+      year: Number(year),
+      day: Number(day)
     });
 
     return response.json(availability);

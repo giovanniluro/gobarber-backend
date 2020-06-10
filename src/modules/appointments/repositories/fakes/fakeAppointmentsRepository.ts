@@ -7,8 +7,8 @@ import { isEqual, getMonth, getYear, getDate} from 'date-fns';
 class AppointmentsRepository implements IAppointmentsRepository {
   private appointments: Appointment[] = [];
 
-  public async findOnTheSameDate(date: Date): Promise<Appointment | undefined> {
-    const foundAppointment = this.appointments.find(appointment => isEqual(appointment.date, date));
+  public async findOnTheSameDate(date: Date, provider_id: string): Promise<Appointment | undefined> {
+    const foundAppointment = this.appointments.find(appointment => isEqual(appointment.date, date) && appointment.provider_id === provider_id);
 
     return foundAppointment;
   };

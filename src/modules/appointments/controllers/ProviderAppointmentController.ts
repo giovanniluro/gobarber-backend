@@ -7,16 +7,16 @@ export default class ProviderAppointmentController {
 
   public async index(request: Request, response: Response): Promise<Response>{
     const provider_id = request.user.id;
-    const { day, month, year} = request.body;
+    const { day, month, year} = request.query;
 
     const cacheProvider = new RedisCacheProvider();
     const appointmentsRepository = new AppointmentsRepository();
     const listProviderAppointmentssService = new ListProviderAppointmentsService(appointmentsRepository, cacheProvider);
 
     const appointments = await listProviderAppointmentssService.execute({
-      day,
-      month,
-      year,
+      day: Number(day),
+      month: Number(month),
+      year: Number(year),
       userID: provider_id
     });
 

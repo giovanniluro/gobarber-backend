@@ -1,5 +1,5 @@
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
-import { getDaysInMonth, getDate } from 'date-fns';
+import { getDaysInMonth, getDate,  isAfter } from 'date-fns';
 
 interface AvailabilityRequest {
   userID: string;
@@ -32,10 +32,11 @@ export default class ListProviderAvailability {
 
     const availability = eachDayArray.map(day => {
       const appointmentsInDay = appointments.filter(appointment => getDate(appointment.date) === day);
+      const compareDate = new Date(year, month - 1, day, 23, 59, 59);
 
       return {
         day,
-        available: appointmentsInDay.length < 10
+        available: isAfter(compareDate, new Date()) && appointmentsInDay.length < 10
       }
 
     })

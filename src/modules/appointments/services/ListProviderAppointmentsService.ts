@@ -1,6 +1,7 @@
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import Appointment from '../infra/typeorm/entities/Appointment';
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import { classToClass } from 'class-transformer';
 
 interface AvailabilityRequest {
   userID: string;
@@ -26,7 +27,7 @@ export default class ListProviderAppointmentsService {
         year
       });
 
-      await this.cacheProvider.save(`provider-appointments:${userID}:${year}-${month}-${day}`, appointments);
+      await this.cacheProvider.save(`provider-appointments:${userID}:${year}-${month}-${day}`, classToClass(appointments));
     }
 
     return appointments;

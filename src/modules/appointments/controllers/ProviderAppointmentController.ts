@@ -2,6 +2,7 @@ import ListProviderAppointmentsService from '../services/ListProviderAppointment
 import AppointmentsRepository from '../infra/typeorm/repositories/AppointmentsRepository';
 import {Request, Response} from 'express';
 import RedisCacheProvider from '@shared/container/providers/CacheProvider/implementations/RedisCacheProvider';
+import { classToClass } from 'class-transformer';
 
 export default class ProviderAppointmentController {
 
@@ -20,7 +21,7 @@ export default class ProviderAppointmentController {
       userID: provider_id
     });
 
-    return response.json(appointments);
+    return response.json(classToClass(appointments));
   }
 
 }

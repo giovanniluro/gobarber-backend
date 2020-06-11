@@ -11,7 +11,7 @@ const dailyAvailabilityController = new DailyAvailabilityProviderController();
 const monthAvailabilityController = new MonthAvailabilityController();
 
 providerRoutes.use(ensureAuthenticated);
-providerRoutes.get('/:id/month-availability', celebrate({
+providerRoutes.get('/:provider_id/month-availability', celebrate({
   [Segments.PARAMS]: {
     provider_id: Joi.string().uuid().required()
   }

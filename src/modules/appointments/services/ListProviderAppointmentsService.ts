@@ -19,7 +19,7 @@ export default class ListProviderAppointmentsService {
 
     let appointments = await this.cacheProvider.recover<Appointment[]>(`provider-appointments:${userID}:${year}-${month}-${day}`);
 
-    if (!appointments) {
+    if (!appointments || appointments?.length == 0) {
       appointments = await this.appointmentsRepository.findAppointmentsInDayFromProvider({
         day,
         month,

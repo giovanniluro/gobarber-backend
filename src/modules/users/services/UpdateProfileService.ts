@@ -41,7 +41,7 @@ export default class UpdateProfileService {
     user.name = name;
     user.email = email;
 
-    return this.usersRepository.save(user);
+    return await this.usersRepository.save(user);
   }
 
 }

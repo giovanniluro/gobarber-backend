@@ -8,6 +8,7 @@ export default class UsersControllers {
 
   public async create( request: Request, response: Response): Promise<Response> {
     const { email, password } = request.body;
+    console.log(request.body);
     const usersRepository = new UsersRepository();
     const hashProvider = new BCryptHashProvider();
     const authUser = new AuthenticateUserService(usersRepository, hashProvider);
